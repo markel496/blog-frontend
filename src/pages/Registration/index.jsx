@@ -84,6 +84,7 @@ export const Registration = () => {
             },
           })}
           error={Boolean(errors.email?.message)}
+          onChange={() => setServerError(null)}
           helperText={errors.email?.message}
           fullWidth
         />
