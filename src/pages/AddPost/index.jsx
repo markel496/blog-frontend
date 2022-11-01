@@ -21,7 +21,7 @@ export const AddPost = () => {
     title: '',
     text: '',
     tags: '',
-    imageUrl: '',
+    imageUrl: ''
   })
 
   const inputFileRef = useRef(null)
@@ -87,8 +87,8 @@ export const AddPost = () => {
       status: false,
       autosave: {
         enabled: true,
-        delay: 1000,
-      },
+        delay: 1000
+      }
     }),
     []
   )
@@ -146,7 +146,7 @@ export const AddPost = () => {
         <TextField
           classes={{ root: styles.tags }}
           variant="standard"
-          placeholder="Тэги"
+          placeholder="Тэги через пробел без #"
           fullWidth
           value={fields.tags}
           onChange={(e) => setFields({ ...fields, tags: e.target.value })}

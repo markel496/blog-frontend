@@ -6,6 +6,22 @@ export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
   return data
 })
 
+export const fetchPopulatePosts = createAsyncThunk(
+  'posts/fetchPopulatePosts',
+  async () => {
+    const { data } = await axios.get('/populate')
+    return data
+  }
+)
+
+export const fetchPostsByTag = createAsyncThunk(
+  'posts/fetchPostsByTag',
+  async (name) => {
+    const { data } = await axios.get(`/posts/tags/${name}`)
+    return data
+  }
+)
+
 export const fetchTags = createAsyncThunk('posts/fetchTags', async () => {
   const { data } = await axios.get('/tags')
   return data
@@ -22,12 +38,12 @@ export const fetchDeletePost = createAsyncThunk(
 const initialState = {
   posts: {
     items: [],
-    status: 'loading',
+    status: 'loading'
   },
   tags: {
     items: [],
-    status: 'loading',
-  },
+    status: 'loading'
+  }
 }
 
 const postsSlice = createSlice({
@@ -45,6 +61,32 @@ const postsSlice = createSlice({
       state.posts.status = 'loaded'
     })
     builder.addCase(fetchPosts.rejected, (state) => {
+      state.posts.items = []
+      state.posts.status = 'error'
+    })
+    //populate posts
+    builder.addCase(fetchPopulatePosts.pending, (state) => {
+      state.posts.items = []
+      state.posts.status = 'loading'
+    })
+    builder.addCase(fetchPopulatePosts.fulfilled, (state, { payload }) => {
+      state.posts.items = payload
+      state.posts.status = 'loaded'
+    })
+    builder.addCase(fetchPopulatePosts.rejected, (state) => {
+      state.posts.items = []
+      state.posts.status = 'error'
+    })
+    //posts by tag
+    builder.addCase(fetchPostsByTag.pending, (state) => {
+      state.posts.items = []
+      state.posts.status = 'loading'
+    })
+    builder.addCase(fetchPostsByTag.fulfilled, (state, { payload }) => {
+      state.posts.items = payload
+      state.posts.status = 'loaded'
+    })
+    builder.addCase(fetchPostsByTag.rejected, (state) => {
       state.posts.items = []
       state.posts.status = 'error'
     })
@@ -67,7 +109,7 @@ const postsSlice = createSlice({
       state.tags.items = []
       state.tags.status = 'error'
     })
-  },
+  }
 })
 
 export default postsSlice.reducer

@@ -34,13 +34,13 @@ export const fetchMe = createAsyncThunk('auth/fetchMe', async () => {
     const { data } = await axios.get('/auth/me')
     return data
   } catch (err) {
-    console.log(err)
+    console.warn(err)
   }
 })
 
 const initialState = {
   user: null,
-  status: 'loading',
+  status: 'loading'
 }
 
 const authSlice = createSlice({
@@ -49,7 +49,7 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null
-    },
+    }
   },
   extraReducers: (builder) => {
     //login
@@ -91,7 +91,7 @@ const authSlice = createSlice({
       state.user = null
       state.status = 'error'
     })
-  },
+  }
 })
 
 export const userData = (state) => Boolean(state.auth.user)
