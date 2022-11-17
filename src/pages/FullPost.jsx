@@ -1,70 +1,82 @@
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { userData } from '../redux/slices/auth'
 import ReactMarkdown from 'react-markdown'
 import { useParams } from 'react-router-dom'
 import axios from '../axios'
+import { useFetching } from '../hooks/useFetching'
 
 import { Post } from '../components/Post'
-import { Index } from '../components/AddComment'
+import { AddComment } from '../components/AddComment'
 import { CommentsBlock } from '../components/CommentsBlock'
 
 import moment from 'moment'
 import 'moment/locale/ru'
 
 export const FullPost = () => {
-  const [data, setData] = useState()
-  const [isLoading, setIsLoading] = useState(true)
+  const [post, setPost] = useState()
+  const [comments, setComments] = useState()
+  const [commentToEdit, setCommentToEdit] = useState({
+    text: '',
+    id: ''
+  })
   const { id } = useParams()
+  const isAuth = useSelector(userData)
+
+  const [fetchPost, isPostLoading] = useFetching(async () => {
+    const { data } = await axios.get(`posts/${id}`)
+    setPost(data)
+  }, 'Ошибка при получении статьи')
+
+  const [fetchComments, isCommentsLoading] = useFetching(async () => {
+    const { data } = await axios.get(`comments/${id}`)
+    setComments(data)
+  }, 'Ошибка при получении комментариев')
+
   useEffect(() => {
-    axios
-      .get(`posts/${id}`)
-      .then((res) => {
-        setData(res.data)
-        setIsLoading(false)
-      })
-      .catch((err) => {
-        console.warn(err)
-        alert('Ошибка при получении статьи')
-      })
+    fetchPost()
+    fetchComments()
   }, [])
 
-  if (isLoading) return <Post isLoading={isLoading} isFullPost />
+  if (isPostLoading) return <Post isLoading={isPostLoading} isFullPost />
 
   return (
     <>
       <Post
-        id={data._id}
-        title={data.title}
-        imageUrl={data.imageUrl}
-        // imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
-        user={data.user}
-        createdAt={moment(data.createdAt).format('LLL')}
-        viewsCount={data.viewsCount}
-        commentsCount={3}
-        tags={data.tags}
+        id={post._id}
+        title={post.title}
+        imageUrl={post.imageUrl}
+        user={post.user}
+        createdAt={moment(post.createdAt).format('ll в LT')}
+        viewsCount={post.viewsCount}
+        commentsCount={post.commentsCount}
+        tags={post.tags}
         isFullPost
       >
-        <ReactMarkdown children={data.text} />
+        <ReactMarkdown children={post.text} />
       </Post>
       <CommentsBlock
-        items={[
-          {
-            user: {
-              fullName: 'Вася Пупкин',
-              avatarUrl: 'https://mui.com/static/images/avatar/1.jpg'
-            },
-            text: 'Это тестовый комментарий 555555'
-          },
-          {
-            user: {
-              fullName: 'Иван Иванов',
-              avatarUrl: 'https://mui.com/static/images/avatar/2.jpg'
-            },
-            text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top'
-          }
-        ]}
-        isLoading={false}
+        comments={comments}
+        setComments={setComments}
+        setCommentToEdit={setCommentToEdit}
+        isLoading={isCommentsLoading}
+        postId={id}
+        setPost={setPost}
       >
-        <Index />
+        {isAuth ? (
+          <AddComment
+            setComments={setComments}
+            postId={id}
+            setPost={setPost}
+            textToEdit={commentToEdit.text}
+            id={commentToEdit.id}
+            setCommentToEdit={setCommentToEdit}
+          />
+        ) : (
+          <p style={{ margin: 0, padding: '0 16px 8px', textAlign: 'center' }}>
+            Войдите или зарегестрируйтесь, чтобы написать комментарий
+          </p>
+        )}
       </CommentsBlock>
     </>
   )

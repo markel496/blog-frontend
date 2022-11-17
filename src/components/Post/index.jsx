@@ -76,19 +76,22 @@ export const Post = ({
               {isFullPost ? title : <Link to={`/posts/${id}`}>{title}</Link>}
             </h2>
             <ul className={styles.tags}>
-              {tags.map((name) => (
-                <li key={name}>
-                  <Link to={`/tags/${name}`}>#{name}</Link>
-                </li>
-              ))}
+              {tags.map(
+                (name) =>
+                  name && (
+                    <li key={name}>
+                      <Link to={`/tags/${name}`}>#{name}</Link>
+                    </li>
+                  )
+              )}
             </ul>
             {children && <div className={styles.content}>{children}</div>}
             <ul className={styles.postDetails}>
-              <li>
+              <li title="просмотры">
                 <EyeIcon />
                 <span>{viewsCount}</span>
               </li>
-              <li>
+              <li title="комментарии">
                 <CommentIcon />
                 <span>{commentsCount}</span>
               </li>

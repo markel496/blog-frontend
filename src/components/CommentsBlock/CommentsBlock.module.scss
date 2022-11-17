@@ -1,0 +1,54 @@
+.list {
+  li[role='separator']:last-of-type {
+    display: none;
+  }
+}
+
+.skeletonWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.userWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.editButton,
+.removeButton {
+  margin: 0px 0px 0px 10px;
+  padding: 2px 6px;
+  border: none;
+  cursor: pointer;
+  background: 0 0;
+  transition: 0.2s ease-in;
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+  @media (min-width: 992px) {
+    &:hover {
+      transform: scale(1.2);
+      svg {
+        fill: blue;
+      }
+    }
+  }
+}
+
+.removeButton {
+  margin: 0;
+  @media (min-width: 992px) {
+    &:hover {
+      svg {
+        fill: red;
+      }
+    }
+  }
+}
+
+.text {
+  margin: 0;
+  padding: 8px 0;
+  color: rgb(95, 95, 95);
+}

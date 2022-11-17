@@ -1,6 +1,8 @@
-import React, { useEffect } from 'react'
+import { useState, useEffect } from 'react'
+import axios from '../axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { useFetching } from '../hooks/useFetching'
 import Grid from '@mui/material/Grid'
 import { Post } from '../components/Post'
 import { fetchPostsByTag } from '../redux/slices/posts'
@@ -12,14 +14,21 @@ import 'moment/locale/ru'
 export const TagPage = () => {
   const { posts } = useSelector((state) => state.posts)
   const user = useSelector((state) => state.auth.user)
+  const [comments, setComments] = useState()
   const dispatch = useDispatch()
   const { name } = useParams()
 
   const isPostsLoading = posts.status === 'loading'
 
+  const [fetchComments, isCommentsLoading] = useFetching(async () => {
+    const { data } = await axios.get(`comments/tag/${name}`)
+    setComments(data)
+  }, 'Ошибка при получении комментариев')
+
   useEffect(() => {
     dispatch(fetchPostsByTag(name))
-  }, [])
+    fetchComments()
+  }, [name])
 
   return (
     <>
@@ -38,7 +47,7 @@ export const TagPage = () => {
                 user={post.user}
                 createdAt={moment(post.createdAt).format('LLL')}
                 viewsCount={post.viewsCount}
-                commentsCount={3}
+                commentsCount={post.commentsCount}
                 tags={post.tags}
                 isEditable={user?._id === post?.user._id}
               />
@@ -47,23 +56,9 @@ export const TagPage = () => {
         </Grid>
         <Grid xs={4} item>
           <CommentsBlock
-            items={[
-              {
-                user: {
-                  fullName: 'Вася Пупкин',
-                  avatarUrl: 'https://mui.com/static/images/avatar/1.jpg'
-                },
-                text: 'Это тестовый комментарий'
-              },
-              {
-                user: {
-                  fullName: 'Иван Иванов',
-                  avatarUrl: 'https://mui.com/static/images/avatar/2.jpg'
-                },
-                text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top'
-              }
-            ]}
-            isLoading={false}
+            unchanged
+            comments={comments}
+            isLoading={isCommentsLoading}
           />
         </Grid>
       </Grid>

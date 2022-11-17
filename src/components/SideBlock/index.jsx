@@ -6,9 +6,7 @@ import Paper from '@mui/material/Paper'
 export const SideBlock = ({ title, children }) => {
   return (
     <Paper elevation={3} classes={{ root: styles.root }}>
-      <Typography variant="h6" classes={{ root: styles.title }}>
-        {title}
-      </Typography>
+      <Typography variant="h6">{title}</Typography>
       {children}
     </Paper>
   )

@@ -41,8 +41,19 @@ export const AddPost = () => {
     }
   }
 
-  const onClickRemoveImage = () => {
-    setFields({ ...fields, imageUrl: '' })
+  const onClickRemoveImage = async () => {
+    try {
+      const startNameIndex = fields.imageUrl.lastIndexOf('/') + 1
+      const fileNameToDeleted = fields.imageUrl.slice(
+        startNameIndex,
+        fields.imageUrl.length
+      )
+      const { data } = await axios.delete(`/uploads/${fileNameToDeleted}`)
+      console.log(data)
+      setFields({ ...fields, imageUrl: '' })
+    } catch (err) {
+      console.warn(err)
+    }
   }
 
   const onChange = useCallback((text) => {
@@ -82,13 +93,9 @@ export const AddPost = () => {
     () => ({
       spellChecker: false,
       maxHeight: '400px',
-      autofocus: true,
       placeholder: 'Введите текст...',
       status: false,
-      autosave: {
-        enabled: true,
-        delay: 1000
-      }
+      hideIcons: ['fullscreen', 'side-by-side', 'preview']
     }),
     []
   )
@@ -142,6 +149,7 @@ export const AddPost = () => {
           fullWidth
           value={fields.title}
           onChange={(e) => setFields({ ...fields, title: e.target.value })}
+          autoComplete="off"
         />
         <TextField
           classes={{ root: styles.tags }}
@@ -150,6 +158,7 @@ export const AddPost = () => {
           fullWidth
           value={fields.tags}
           onChange={(e) => setFields({ ...fields, tags: e.target.value })}
+          autoComplete="off"
         />
         <SimpleMDE
           className={styles.editor}

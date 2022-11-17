@@ -23,26 +23,23 @@ export const Registration = () => {
   const {
     register,
     formState: { errors, isValid },
-    handleSubmit,
-    reset,
+    handleSubmit
   } = useForm({
     defaultValues: {
       fullName: 'Ваня Маркелов',
       email: 'test@yandex.ru',
-      password: '12345',
+      password: '12345'
     },
-    mode: 'onSubmit',
+    mode: 'onSubmit'
   })
 
   //Будет вызван, если форма заполнена без ошибок
   const onSubmit = async (data) => {
     const res = await dispatch(fetchRegister(data))
     if (!res.payload.hasOwnProperty('token')) {
-      console.log(res)
       return setServerError(res.payload.message)
     }
     localStorage.setItem('blog/token', res.payload.token)
-    // reset() // Очищаю поля формы
   }
 
   if (isAuth) {
@@ -65,8 +62,8 @@ export const Registration = () => {
             required: 'Поле обязательно к заполнению',
             minLength: {
               value: 5,
-              message: 'Минимум 5 символов',
-            },
+              message: 'Минимум 5 символов'
+            }
           })}
           error={Boolean(errors.fullName?.message)}
           helperText={errors.fullName?.message}
@@ -80,8 +77,8 @@ export const Registration = () => {
             pattern: {
               value:
                 /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
-              message: 'Неверный адрес почты',
-            },
+              message: 'Неверный адрес почты'
+            }
           })}
           error={Boolean(errors.email?.message)}
           onChange={() => setServerError(null)}
@@ -92,13 +89,12 @@ export const Registration = () => {
           className={styles.field}
           label="Пароль"
           type={showPassword ? 'text' : 'password'}
-          // autoComplete="current-password"
           {...register('password', {
             required: 'Поле обязательно к заполнению',
             minLength: {
               value: 5,
-              message: 'Минимум 5 символов',
-            },
+              message: 'Минимум 5 символов'
+            }
           })}
           error={Boolean(errors.password?.message)}
           helperText={errors.password?.message}
@@ -114,7 +110,7 @@ export const Registration = () => {
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
-            ),
+            )
           }}
         />
         <Button

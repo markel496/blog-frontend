@@ -1,28 +1,37 @@
-import React, { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import axios from '../axios'
 import { useDispatch, useSelector } from 'react-redux'
+import { useFetching } from '../hooks/useFetching'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Grid from '@mui/material/Grid'
 import { Post } from '../components/Post'
 import { TagsBlock } from '../components/TagsBlock'
 import { CommentsBlock } from '../components/CommentsBlock'
-import {
-  fetchPosts,
-  fetchTags,
-  fetchPopulatePosts
-} from '../redux/slices/posts'
+import { fetchPosts, fetchPopulatePosts } from '../redux/slices/posts'
 
 import moment from 'moment'
 import 'moment/locale/ru'
 
 export const Home = () => {
-  const { posts, tags } = useSelector((state) => state.posts)
+  const { posts } = useSelector((state) => state.posts)
   const user = useSelector((state) => state.auth.user)
+  const [tags, setTags] = useState()
+  const [comments, setComments] = useState()
   const dispatch = useDispatch()
-  const [tabValue, setTabValue] = React.useState(0)
+  const [tabValue, setTabValue] = useState(0)
 
   const isPostsLoading = posts.status === 'loading'
-  const isTagsLoading = tags.status === 'loading'
+
+  const [fetchTags, isTagsLoading] = useFetching(async () => {
+    const { data } = await axios.get('/tags')
+    setTags(data)
+  }, 'Ошибка при получении статьи')
+
+  const [fetchComments, isCommentsLoading] = useFetching(async () => {
+    const { data } = await axios.get('/comments')
+    setComments(data)
+  }, 'Ошибка при получении комментариев')
 
   const changeTab = (event, newValue) => {
     setTabValue(newValue)
@@ -35,7 +44,8 @@ export const Home = () => {
 
   useEffect(() => {
     dispatch(fetchPosts())
-    dispatch(fetchTags())
+    fetchTags()
+    fetchComments()
   }, [])
 
   return (
@@ -60,11 +70,10 @@ export const Home = () => {
                 id={post._id}
                 title={post.title}
                 imageUrl={post.imageUrl}
-                // imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
                 user={post.user}
-                createdAt={moment(post.createdAt).format('LLL')}
+                createdAt={moment(post.createdAt).format('ll в LT')}
                 viewsCount={post.viewsCount}
-                commentsCount={3}
+                commentsCount={post.commentsCount}
                 tags={post.tags}
                 isEditable={user?._id === post?.user._id}
               />
@@ -72,25 +81,11 @@ export const Home = () => {
           )}
         </Grid>
         <Grid xs={4} item>
-          <TagsBlock items={tags.items} isLoading={isTagsLoading} />
+          <TagsBlock items={tags} isLoading={isTagsLoading} />
           <CommentsBlock
-            items={[
-              {
-                user: {
-                  fullName: 'Вася Пупкин',
-                  avatarUrl: 'https://mui.com/static/images/avatar/1.jpg'
-                },
-                text: 'Это тестовый комментарий'
-              },
-              {
-                user: {
-                  fullName: 'Иван Иванов',
-                  avatarUrl: 'https://mui.com/static/images/avatar/2.jpg'
-                },
-                text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top'
-              }
-            ]}
-            isLoading={false}
+            unchanged
+            comments={comments}
+            isLoading={isCommentsLoading}
           />
         </Grid>
       </Grid>
