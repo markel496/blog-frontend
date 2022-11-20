@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Navigate } from 'react-router-dom'
+import axios from '../../axios'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import Visibility from '@mui/icons-material/Visibility'
@@ -14,12 +15,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import { fetchRegister, userData } from '../../redux/slices/auth'
 
 import styles from './Registration.module.scss'
+import { ReactComponent as AddIcon } from './add-icon.svg'
+import { ReactComponent as RemoveIcon } from './remove-icon.svg'
 
 export const Registration = () => {
   const dispatch = useDispatch()
   const isAuth = useSelector(userData)
+  const [avatarUrl, setAvatarUrl] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [serverError, setServerError] = useState(null)
+  const inputFileRef = useRef(null)
   const {
     register,
     formState: { errors, isValid },
@@ -32,6 +37,36 @@ export const Registration = () => {
     },
     mode: 'onSubmit'
   })
+
+  const handleChangeAvatar = async (event) => {
+    try {
+      const formData = new FormData()
+      const file = event.target.files[0]
+      formData.append('image', file)
+      console.log(formData)
+      const { data } = await axios.post('/upload/avatar', formData)
+      setAvatarUrl(data.url)
+    } catch (err) {
+      console.warn(err)
+      alert('Ошибка при загрузке файла!')
+    }
+  }
+
+  const onClickRemoveAvatar = async () => {
+    try {
+      const startNameIndex = avatarUrl.lastIndexOf('/') + 1
+      const fileNameToDeleted = avatarUrl.slice(
+        startNameIndex,
+        avatarUrl.length
+      )
+      const { data } = await axios.delete(
+        `/uploads/avatars/${fileNameToDeleted}`
+      )
+      setAvatarUrl('')
+    } catch (err) {
+      console.warn(err)
+    }
+  }
 
   //Будет вызван, если форма заполнена без ошибок
   const onSubmit = async (data) => {
@@ -52,7 +87,28 @@ export const Registration = () => {
         Создание аккаунта
       </Typography>
       <div className={styles.avatar}>
-        <Avatar sx={{ width: 100, height: 100 }} />
+        <Avatar
+          sx={{ width: 100, height: 100 }}
+          src={
+            avatarUrl &&
+            `${
+              process.env.REACT_APP_API_URL || 'http://localhost:4200'
+            }${avatarUrl}`
+          }
+        />
+        {!avatarUrl ? (
+          <AddIcon onClick={() => inputFileRef.current.click()} />
+        ) : (
+          <RemoveIcon onClick={onClickRemoveAvatar} />
+        )}
+
+        <input
+          ref={inputFileRef}
+          type="file"
+          onChange={handleChangeAvatar}
+          accept="image/*,.png,.jpg,.gif,.web"
+          hidden
+        />
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextField

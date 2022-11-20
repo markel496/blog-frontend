@@ -15,9 +15,9 @@ export const TagsBlock = ({ items, isLoading = true }) => {
   return (
     <SideBlock title="Тэги">
       <List>
-        {(isLoading ? [...Array(5)] : items).map(
-          (name, i) =>
-            name && (
+        {isLoading
+          ? [...Array(5)].map(() => <Skeleton width={100} height={50} />)
+          : items.map((name, i) => (
               <Link
                 key={i}
                 style={{ textDecoration: 'none', color: 'black' }}
@@ -28,16 +28,12 @@ export const TagsBlock = ({ items, isLoading = true }) => {
                     <ListItemIcon>
                       <TagIcon />
                     </ListItemIcon>
-                    {isLoading ? (
-                      <Skeleton width={100} />
-                    ) : (
-                      <ListItemText primary={name} />
-                    )}
+
+                    <ListItemText primary={name} />
                   </ListItemButton>
                 </ListItem>
               </Link>
-            )
-        )}
+            ))}
       </List>
     </SideBlock>
   )

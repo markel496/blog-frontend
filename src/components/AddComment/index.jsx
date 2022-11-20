@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import axios from '../../axios'
-
+import { useSelector } from 'react-redux'
 import styles from './AddComment.module.scss'
 import TextField from '@mui/material/TextField'
 import Avatar from '@mui/material/Avatar'
@@ -14,6 +14,7 @@ export const AddComment = ({
   id,
   setCommentToEdit
 }) => {
+  const user = useSelector((state) => state.auth.user)
   const [value, setValue] = useState('')
   const inputRef = useRef(null)
 
@@ -76,7 +77,15 @@ export const AddComment = ({
   return (
     <>
       <div className={styles.root}>
-        <Avatar classes={{ root: styles.avatar }} src="" />
+        <Avatar
+          classes={{ root: styles.avatar }}
+          src={
+            user.avatarUrl &&
+            `${process.env.REACT_APP_API_URL || 'http://localhost:4200'}${
+              user.avatarUrl
+            }`
+          }
+        />
         <div className={styles.form}>
           <TextField
             inputRef={inputRef}

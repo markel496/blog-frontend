@@ -16,9 +16,19 @@
 }
 
 .avatar {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 30px;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 30px;
+  position: relative;
+  svg[id='add-icon'],
+  svg[id='remove-icon'] {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+  }
 }
 
 .error {
