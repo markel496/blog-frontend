@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { userData } from '../../redux/slices/auth'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import TextField from '@mui/material/TextField'
 import Paper from '@mui/material/Paper'
 import Button from '@mui/material/Button'
@@ -27,6 +28,8 @@ export const AddPost = () => {
   const inputFileRef = useRef(null)
 
   const isEditing = Boolean(id)
+
+  const breakpoint = useMediaQuery('(min-width:490px)')
 
   const handleChangeFile = async (event) => {
     try {
@@ -92,7 +95,7 @@ export const AddPost = () => {
   const options = React.useMemo(
     () => ({
       spellChecker: false,
-      maxHeight: '400px',
+      minHeight: '200px',
       placeholder: 'Введите текст...',
       status: false,
       hideIcons: ['fullscreen', 'side-by-side', 'preview']
@@ -145,7 +148,7 @@ export const AddPost = () => {
         <TextField
           classes={{ root: styles.title }}
           variant="standard"
-          placeholder="Заголовок статьи..."
+          placeholder={breakpoint ? 'Заголовок статьи...' : 'Заголовок'}
           fullWidth
           value={fields.title}
           onChange={(e) => setFields({ ...fields, title: e.target.value })}

@@ -4,9 +4,24 @@
   }
 }
 
+.listItem {
+  @media (max-width: 390px) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
 .skeletonWrapper {
   display: flex;
   flex-direction: column;
+}
+
+.skeletonCommentText {
+  height: 18px;
+  width: 230px;
+  @media (max-width: 1130px) {
+    width: 180px;
+  }
 }
 
 .userWrapper {
@@ -14,9 +29,18 @@
   align-items: center;
 }
 
+.btnsContainer {
+  position: absolute;
+  right: 0;
+  @media (max-width: 390px) {
+    display: flex;
+    flex-direction: column;
+    right: -5px;
+  }
+}
+
 .editButton,
 .removeButton {
-  margin: 0px 0px 0px 10px;
   padding: 2px 6px;
   border: none;
   cursor: pointer;
@@ -37,13 +61,15 @@
 }
 
 .removeButton {
-  margin: 0;
   @media (min-width: 992px) {
     &:hover {
       svg {
         fill: red;
       }
     }
+  }
+  @media (max-width: 390px) {
+    margin: 7px 0px 0px 0px;
   }
 }
 

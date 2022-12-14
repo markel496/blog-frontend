@@ -46,7 +46,10 @@ export const CommentsBlock = ({
       <List className={unchanged && styles.list}>
         {(isLoading ? [...Array(5)] : comments)?.map((comment, i) => (
           <React.Fragment key={i}>
-            <ListItem alignItems="flex-start">
+            <ListItem
+              classes={{ root: styles.listItem }}
+              alignItems="flex-start"
+            >
               <ListItemAvatar>
                 {isLoading ? (
                   <Skeleton variant="circular" width={40} height={40} />
@@ -66,17 +69,21 @@ export const CommentsBlock = ({
                 {isLoading ? (
                   <>
                     <Skeleton variant="text" height={25} width={120} />
-                    <Skeleton variant="text" height={18} width={230} />
+                    <Skeleton
+                      variant="text"
+                      classes={{ root: styles.skeletonCommentText }}
+                    />
                   </>
                 ) : (
                   <>
                     <div className={styles.userWrapper}>
                       <ListItemText
+                        style={{ whiteSpace: 'nowrap' }}
                         primary={comment.autor.fullName}
                         secondary={moment(comment.createdAt).format('ll в LT')}
                       />
                       {!unchanged && user?._id === comment.autor._id && (
-                        <>
+                        <div className={styles.btnsContainer}>
                           <button
                             className={styles.editButton}
                             title="Редактировать"
@@ -96,7 +103,7 @@ export const CommentsBlock = ({
                           >
                             <RemoveIcon />
                           </button>
-                        </>
+                        </div>
                       )}
                     </div>
 
@@ -115,7 +122,9 @@ export const CommentsBlock = ({
           </React.Fragment>
         ))}
       </List>
-      {!comments?.length && <p className={styles.text}>Нет комментариев</p>}
+      {!isLoading && !comments?.length && (
+        <p className={styles.text}>Нет комментариев</p>
+      )}
       {children}
     </SideBlock>
   )

@@ -5,6 +5,7 @@ import { useFetching } from '../hooks/useFetching'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Grid from '@mui/material/Grid'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { Post } from '../components/Post'
 import { TagsBlock } from '../components/TagsBlock'
 import { CommentsBlock } from '../components/CommentsBlock'
@@ -20,6 +21,8 @@ export const Home = () => {
   const [comments, setComments] = useState()
   const dispatch = useDispatch()
   const [tabValue, setTabValue] = useState(0)
+
+  const breakpoint = useMediaQuery('(min-width:992px)')
 
   const isPostsLoading = posts.status === 'loading'
 
@@ -60,7 +63,7 @@ export const Home = () => {
         <Tab label="Популярные" />
       </Tabs>
       <Grid container spacing={4}>
-        <Grid xs={8} item>
+        <Grid xs={breakpoint ? 8 : 12} item>
           {(isPostsLoading ? [...Array(5)] : posts.items).map((post, index) =>
             isPostsLoading ? (
               <Post key={index} isLoading={isPostsLoading} />
@@ -80,14 +83,16 @@ export const Home = () => {
             )
           )}
         </Grid>
-        <Grid xs={4} item>
-          <TagsBlock items={tags} isLoading={isTagsLoading} />
-          <CommentsBlock
-            unchanged
-            comments={comments}
-            isLoading={isCommentsLoading}
-          />
-        </Grid>
+        {breakpoint && (
+          <Grid xs={4} item>
+            <TagsBlock items={tags} isLoading={isTagsLoading} />
+            <CommentsBlock
+              unchanged
+              comments={comments}
+              isLoading={isCommentsLoading}
+            />
+          </Grid>
+        )}
       </Grid>
     </>
   )

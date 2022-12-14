@@ -16,7 +16,14 @@ export const TagsBlock = ({ items, isLoading = true }) => {
     <SideBlock title="Тэги">
       <List>
         {isLoading
-          ? [...Array(5)].map(() => <Skeleton width={100} height={50} />)
+          ? [...Array(5)].map((_, i) => (
+              <ListItem key={i} disablePadding>
+                <ListItemIcon style={{ paddingLeft: 16, marginRight: 15 }}>
+                  <TagIcon />
+                </ListItemIcon>
+                <Skeleton width={100} height={50} />
+              </ListItem>
+            ))
           : items.map((name, i) => (
               <Link
                 key={i}

@@ -42,16 +42,22 @@ $blue: #4361ee;
 }
 
 .content {
-  margin: 30px 0 50px;
+  margin: 30px 0 30px;
+  @media (max-width: 480px) {
+    margin: 15px 0 15px;
+  }
 
   p {
+    margin: 0;
     font-size: 22px;
     line-height: 36px;
   }
 }
 
 .indention {
-  padding-left: 40px;
+  @media (min-width: 992px) {
+    padding-left: 40px;
+  }
 }
 
 .title {
@@ -70,6 +76,13 @@ $blue: #4361ee;
   &Full {
     font-size: 42px;
     font-weight: 900;
+    line-height: 50px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    @media (max-width: 480px) {
+      font-size: 32px;
+      line-height: 36px;
+    }
   }
 }
 

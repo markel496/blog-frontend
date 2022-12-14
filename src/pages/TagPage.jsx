@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid'
 import { Post } from '../components/Post'
 import { fetchPostsByTag } from '../redux/slices/posts'
 import { CommentsBlock } from '../components/CommentsBlock'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 import moment from 'moment'
 import 'moment/locale/ru'
@@ -17,6 +18,8 @@ export const TagPage = () => {
   const [comments, setComments] = useState()
   const dispatch = useDispatch()
   const { name } = useParams()
+
+  const breakpoint = useMediaQuery('(min-width:992px)')
 
   const isPostsLoading = posts.status === 'loading'
 
@@ -34,7 +37,7 @@ export const TagPage = () => {
     <>
       <h1>#{name}</h1>
       <Grid container spacing={4}>
-        <Grid xs={8} item>
+        <Grid xs={breakpoint ? 8 : 12} item>
           {(isPostsLoading ? [...Array(5)] : posts.items).map((post, index) =>
             isPostsLoading ? (
               <Post key={index} isLoading={isPostsLoading} />
@@ -54,13 +57,15 @@ export const TagPage = () => {
             )
           )}
         </Grid>
-        <Grid xs={4} item>
-          <CommentsBlock
-            unchanged
-            comments={comments}
-            isLoading={isCommentsLoading}
-          />
-        </Grid>
+        {breakpoint && (
+          <Grid xs={4} item>
+            <CommentsBlock
+              unchanged
+              comments={comments}
+              isLoading={isCommentsLoading}
+            />
+          </Grid>
+        )}
       </Grid>
     </>
   )
