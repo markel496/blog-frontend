@@ -25,7 +25,9 @@ export const Post = ({
   children,
   isFullPost,
   isLoading,
-  isEditable
+  isEditable,
+  updateTags,
+  updateComments
 }) => {
   const dispatch = useDispatch()
   if (isLoading) {
@@ -34,8 +36,9 @@ export const Post = ({
   const onClickRemove = () => {
     try {
       if (window.confirm('Вы действительно хотите удалить статью?')) {
-        console.log(id)
         dispatch(fetchDeletePost(id))
+        updateTags()
+        updateComments()
       }
     } catch (err) {
       console.log(err)

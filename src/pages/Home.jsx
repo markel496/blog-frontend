@@ -79,6 +79,8 @@ export const Home = () => {
                 commentsCount={post.commentsCount}
                 tags={post.tags}
                 isEditable={user?._id === post?.user._id}
+                updateTags={fetchTags}
+                updateComments={fetchComments}
               />
             )
           )}
